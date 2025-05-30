@@ -1,0 +1,17 @@
+DROP TABLE IF EXISTS players CASCADE;
+DROP TABLE IF EXISTS stats;
+
+CREATE TABLE players (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE stats (
+    id SERIAL PRIMARY KEY,
+    average INTEGER NOT NULL,
+    slugging INTEGER NOT NULL,
+    onbasepct INTEGER NOT NULL,
+    player_id INTEGER NOT NULL,
+    FOREIGN KEY (player_id) REFERENCES players(id)
+    ON DELETE CASCADE
+);
