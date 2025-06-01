@@ -7,3 +7,11 @@ export async function createPlayer(name){
     const {rows: [player]} = await db.query(sql, [name])
     return player
 }
+
+export async function getPlayers(){
+    const sql = `
+    SELECT * FROM players;
+    `
+    const {rows: players} = await db.query(sql)
+    return players
+}
