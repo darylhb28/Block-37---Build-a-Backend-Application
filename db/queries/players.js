@@ -15,3 +15,20 @@ export async function getPlayers(){
     const {rows: players} = await db.query(sql)
     return players
 }
+
+export async function getPlayerById(id){
+    const sql =`
+    SELECT * FROM players WHERE id = $1;    
+    `
+    const {rows: [player]} = await db.query(sql, [id])
+    return player
+}
+
+export async function deletePlayer(id){
+    const sql = `
+    DELETE FROM players WHERE id = $1
+    `
+    const {rows: [player]} = await db.query(sql, [id])
+    return player
+}
+
