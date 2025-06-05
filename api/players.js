@@ -1,6 +1,7 @@
 import express from "express"
 import { createPlayer, deletePlayer, getPlayerById, getPlayers } from "../db/queries/players.js"
 import { updateStatsByPlayerId } from "../db/queries/stats.js"
+import { verifyToken } from "./auth.js"
 const playersRouter = express.Router()
 export default playersRouter
 
@@ -23,8 +24,11 @@ playersRouter.route('/:id').get(async(req, res)=>{
     res.status(200).send(foundPlayer)
 })
 
-//POST (requires "firstName" and "lastName" fields)
-playersRouter.route('/').post(async(req,res)=>{
+//POST (requires auth, requires "firstName" and "lastName" fields)
+playersRouter.route('/').post( verifyToken, async(req,res)=>{
+    if(!req.user){
+        return res.status(404).send("Function only available to authorized users.")
+    }
     if (!req.body){
         return res.status(400).send("Missing required fields.")
     }
@@ -44,8 +48,11 @@ playersRouter.route('/').post(async(req,res)=>{
     })
 })
 
-//PUT (updates a player's stats by their ID)
-playersRouter.route("/:id/stats").put(async (req, res)=>{
+//PUT (requires auth, updates a player's stats by their ID)
+playersRouter.route("/:id/stats").put( verifyToken, async (req, res)=>{
+    if (!req.user){
+        return res.status(400).send("Function only available to authorized users.")
+    }
     const id = Number(req.params.id)  
     const foundPlayer = await getPlayerById(id)
 
@@ -68,8 +75,11 @@ playersRouter.route("/:id/stats").put(async (req, res)=>{
 
 })
 
-//DELETE
-playersRouter.route("/:id").delete(async(req, res)=>{
+//DELETE (requires auth)
+playersRouter.route("/:id").delete( verifyToken, async(req, res)=>{
+    if (!req.user){
+        return res.status(400).send("Function only available to authorized users.")
+    }
     const id = Number(req.params.id)  
     const foundPlayer = await getPlayerById(id)
 
